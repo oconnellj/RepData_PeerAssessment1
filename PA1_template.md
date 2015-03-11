@@ -5,7 +5,7 @@
 
 This is a summary of my analysis of the fitness activity data.
 
-The goal was to analyse the total number of steps taken per day and per time interval, over a 2 month period (October and November 2012)l
+The goal was to analyse the total number of steps taken per day and per time interval, over a 2 month period (October and November 2012)
 
 ## Loading and preprocessing the data
 For the first part of the analysis, I unzipped the raw data and read the csv-formatted data
@@ -109,7 +109,7 @@ The time interval with the highest total number of steps occurs at 8:35, and tha
 
 ## Imputing missing values
 
-In the analysis so far, I have ignored time intervals that contained NA values. 
+In the analysis so far, I have ignored time intervals that contained NA values. I calculate the number of NA values in the original data set.
 
 ```r
 ## How many time intervals have NA values ?
@@ -183,32 +183,30 @@ wd_activity <- activity2[(activity2$wd == "WEEKDAY"),]
 we_activity <- activity2[(activity2$wd == "WEEKEND"),]
 ```
 
-Now re-draw the mean number of steps per time interval for those two subsets.
-
-This is the plot for weekdays ...
+Now re-draw the mean number of steps per time interval for those two subsets, to compare the daily activity pattern for weekends and weekdays
 
 ```r
-## Now, redraw the two plots for weekdays and weekends
-
 wd_means <- data.frame(unlist(lapply(split(wd_activity, wd_activity$interval), function(x) mean(x$steps))))
 names(wd_means) <- "mean_steps"
+we_means <- data.frame(unlist(lapply(split(we_activity, we_activity$interval), function(x) mean(x$steps))))
+names(we_means) <- "mean_steps"
+par(mfrow=c(2,1), mar = c(3,3,2,1), oma = c(2,2,2,0))
+
+plot(intervals, as.numeric(we_means$mean_steps), type = "l", col = "blue",
+  main = "Weekend", cex.main = 0.8,
+	ylab = "", xlab = "", 
+	ylim = c(0,250), cex.axis = 0.75)
+
 plot(intervals, as.numeric(wd_means$mean_steps), type = "l", col = "blue",
-     main = "Mean number of steps by time interval on weekdays",
-     xlab = "Time Interval", ylab = "Average number of steps")
+	main = "Weekday", cex.main = 0.8,
+	ylab = "", xlab = "", 
+	ylim = c(0,250), cex.axis = 0.75)
+
+mtext("Comparison of weekend and weekday activity patterns", side = 3, outer = TRUE)
+mtext("Number of steps", side = 2, outer= TRUE)
+mtext("Time intervals", side = 1, outer = TRUE)
 ```
 
 ![](./PA1_template_files/figure-html/unnamed-chunk-10-1.png) 
-
-And this is the plot for weekends ...
-
-```r
-we_means <- data.frame(unlist(lapply(split(we_activity, we_activity$interval), function(x) mean(x$steps))))
-names(we_means) <- "mean_steps"
-plot(intervals, as.numeric(we_means$mean_steps), type = "l", col = "blue",
-     main = "Mean number of steps by time interval on weekends",
-     xlab = "Time Interval", ylab = "Average number of steps")
-```
-
-![](./PA1_template_files/figure-html/unnamed-chunk-11-1.png) 
 
 As we can see, the average daily activity pattern has shifted to the right (i.e. to later in the day) on weekend days, compared to weekdays.
