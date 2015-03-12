@@ -59,7 +59,7 @@ print(paste("Median number of daily steps is", md))
 ```
 ## [1] "Median number of daily steps is 10395"
 ```
-The mean number of steps taken in a day is approximately 9354, while the median of the number of daily steps is 10395, as also shown in this updated histogram.
+The mean number of steps taken in a day is approximately 9354, while the median of the number of daily steps is 10395, as also shown in the updated histogram below.
 
 ```r
 hist(as.numeric(daily_totals$total_steps), breaks = 20, xlim = c(0,25000), ylim = c(0,12), col = "red",
@@ -92,10 +92,14 @@ I now calculate the time interval which has the highest mean number of steps.
 
 ```r
 ## Calculate the time interval with the highest number of steps
+## Split the data set by time interval, and calculate the total number
+## of steps per time interval
 interval_totals <- data.frame(unlist(lapply(split(values, values$interval), function(x) sum(x$steps))))
 names(interval_totals) <- "total_steps"
+## Find the row with the highest number of steps
 x <- which.max(interval_totals$total_steps)
 y <- max(interval_totals$total_steps)
+## Retrieve the name of that row, and display it as a time
 n <- rownames(interval_totals)
 max <- strptime(sprintf("%04d", as.numeric(n[x])), format="%H%M")
 t <- as.POSIXlt(max)
@@ -106,7 +110,7 @@ print(paste("Time interval with highest total number of steps is ",t$hour,":", t
 ## [1] "Time interval with highest total number of steps is 8:35"
 ```
 
-The time interval with the highest total number of steps occurs at 8:35, and that a total of 10927 steps were taken during that time interval over the observed period.
+The time interval with the highest total number of steps occurs at 8:35, and a total of 10927 steps were taken during that time interval over the observed period.
 
 ## Imputing missing values
 
@@ -122,7 +126,7 @@ print(paste("There are",s,"time intervals with NA values"))
 ## [1] "There are 2304 time intervals with NA values"
 ```
 
-I create a new data set in which all of NA values are replaced by the mean value for the same interval. To do this, I replace the NA values in the na_values data set by the mean value for the equivalent time interval, and then combine the resulting data set with the original non-NA values.
+I create a new data set in which the NA value for a given time interval is replaced by the mean value for the same interval on other days. To achieve this, I replace the NA values in the na_values data set by the mean value for the equivalent time interval, and then combine the resulting data set with the original non-NA values.
 
 ```r
 ## Replace each NA value by the mean value for the same interval on other dates
@@ -130,6 +134,7 @@ for (k in 1:nrow(na_values)) {
 		t <- na_values[k,"interval"]
 		na_values[k,"steps"] <- interval_means[as.character(t),"mean_steps"]
 		}
+## Create a new data set thaat contains the replaced NA values
 activity2 <- rbind(values, na_values)
 ```
 
@@ -164,7 +169,7 @@ hist(as.numeric(daily_totals2$total_steps), breaks = 20, xlim = c(0,25000), ylim
 
 ![](./PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
 
-We can see that, having replaced the NA values with calculated values, the mean number of steps taken in a day has increased to approximately 10766, while the median of the number of daily steps is identical to the mean (10766). Also, there are now only 2 days with fewer than 1000 steps.
+We can see that, having replaced the NA values with calculated values, the mean number of steps taken in a day has increased to approximately 10766, and that the median of the number of daily steps is identical to the mean (10766). Also, there are now only 2 days with fewer than 1000 steps.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 For the final part of the analysis, I split the data set into weekdays (Monday to Friday) and weekends (Saturday and Sunday), to see if average daily activity pattern different between weekdays and weekends.
@@ -207,4 +212,4 @@ mtext("Time intervals", side = 1, outer = TRUE)
 
 ![](./PA1_template_files/figure-html/unnamed-chunk-10-1.png) 
 
-As we can see, the average daily activity pattern has shifted to the right (i.e. to later in the day) on weekend days, compared to weekdays.
+As we can see, the daily activity pattern has shifted to the right (i.e. to later in the day) on weekend days, compared to weekdays.
